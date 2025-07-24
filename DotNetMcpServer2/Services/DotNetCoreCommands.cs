@@ -301,4 +301,16 @@ public static class DotNetCoreCommands
         var result = await DotNetExecutor.ExecuteAsync(args, workingDirectory);
         return result.ToString();
     }
+
+    [McpServerTool, Description("Executes any dotnet CLI command with custom arguments")]
+    public static async Task<string> DynamicCliAsync(
+        [Description("The complete dotnet command arguments (everything after 'dotnet')")] string command,
+        [Description("Working directory")] string? workingDirectory = null)
+    {
+        if (string.IsNullOrWhiteSpace(command))
+            throw new ArgumentException("Command cannot be null or empty", nameof(command));
+
+        var result = await DotNetExecutor.ExecuteAsync(command.Trim(), workingDirectory);
+        return result.ToString();
+    }
 }

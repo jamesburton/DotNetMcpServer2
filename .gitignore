@@ -14,6 +14,11 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# AOT publish output
+publish/
+*.exe
+*.app
+
 # Visual Studio 2015/2017/2019/2022 cache/options directory
 .vs/
 
@@ -32,22 +37,6 @@ bld/
 
 # Mono auto generated files
 mono_crash.*
-
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
 
 # Windows image file caches
 Thumbs.db
@@ -140,16 +129,17 @@ FodyWeavers.xsd
 # Local History for Visual Studio Code
 .history/
 
-# Windows Installer files from build outputs
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
 # JetBrains IDEs
 .idea/
 *.sln.iml
 
 # User secrets
 secrets.json
+
+# AOT/Native compilation artifacts
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.so
+*.dylib

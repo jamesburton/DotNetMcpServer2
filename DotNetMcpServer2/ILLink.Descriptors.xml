@@ -1,0 +1,79 @@
+<linker>
+  <!-- Preserve all MCP tool classes and their methods -->
+  <assembly fullname="DotNetMcpServer2" preserve="all">
+    <type fullname="DotNetMcpServer2.Services.DotNetCoreCommands" preserve="all" />
+    <type fullname="DotNetMcpServer2.Services.SolutionCommands" preserve="all" />
+    <type fullname="DotNetMcpServer2.Services.EntityFrameworkCommands" preserve="all" />
+    <type fullname="DotNetMcpServer2.Core.DotNetExecutor" preserve="all" />
+    <type fullname="DotNetMcpServer2.Core.CommandResult" preserve="all" />
+    <type fullname="AppJsonSerializerContext" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve System.ComponentModel attributes used by MCP -->
+  <assembly fullname="System.ComponentModel.Primitives">
+    <type fullname="System.ComponentModel.DescriptionAttribute" preserve="all" />
+    <type fullname="System.ComponentModel.CategoryAttribute" preserve="all" />
+    <type fullname="System.ComponentModel.DefaultValueAttribute" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve ModelContextProtocol attributes and core types -->
+  <assembly fullname="ModelContextProtocol">
+    <namespace fullname="ModelContextProtocol.Server" preserve="all" />
+    <namespace fullname="ModelContextProtocol.Protocol" preserve="all" />
+    <type fullname="ModelContextProtocol.Server.McpServerToolAttribute" preserve="all" />
+    <type fullname="ModelContextProtocol.Server.McpServerToolTypeAttribute" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve Microsoft.Extensions types needed for hosting -->
+  <assembly fullname="Microsoft.Extensions.Hosting">
+    <type fullname="Microsoft.Extensions.Hosting.Host" preserve="all" />
+    <type fullname="Microsoft.Extensions.Hosting.HostApplicationBuilder" preserve="all" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.Hosting.Abstractions">
+    <type fullname="Microsoft.Extensions.Hosting.IHost" preserve="all" />
+    <type fullname="Microsoft.Extensions.Hosting.IHostBuilder" preserve="all" />
+    <type fullname="Microsoft.Extensions.Hosting.IHostApplicationBuilder" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve logging infrastructure -->
+  <assembly fullname="Microsoft.Extensions.Logging">
+    <namespace fullname="Microsoft.Extensions.Logging" preserve="all" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.Logging.Console">
+    <namespace fullname="Microsoft.Extensions.Logging.Console" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve dependency injection -->
+  <assembly fullname="Microsoft.Extensions.DependencyInjection">
+    <namespace fullname="Microsoft.Extensions.DependencyInjection" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve essential System types -->
+  <assembly fullname="System.Runtime">
+    <type fullname="System.Diagnostics.Process" preserve="all" />
+    <type fullname="System.Diagnostics.ProcessStartInfo" preserve="all" />
+    <type fullname="System.Diagnostics.Stopwatch" preserve="all" />
+    <type fullname="System.Text.StringBuilder" preserve="all" />
+    <type fullname="System.Environment" preserve="all" />
+    <type fullname="System.TimeSpan" preserve="all" />
+    <type fullname="System.Exception" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve JSON serialization for AOT -->
+  <assembly fullname="System.Text.Json">
+    <type fullname="System.Text.Json.JsonSerializer" preserve="all" />
+    <type fullname="System.Text.Json.JsonSerializerOptions" preserve="all" />
+    <type fullname="System.Text.Json.Serialization.JsonSerializerContext" preserve="all" />
+    <type fullname="System.Text.Json.Serialization.JsonSerializableAttribute" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve async/await infrastructure -->
+  <assembly fullname="System.Threading.Tasks">
+    <type fullname="System.Threading.Tasks.Task" preserve="all" />
+    <type fullname="System.Threading.Tasks.Task`1" preserve="all" />
+    <type fullname="System.Threading.Tasks.ValueTask" preserve="all" />
+    <type fullname="System.Threading.Tasks.ValueTask`1" preserve="all" />
+  </assembly>
+</linker>

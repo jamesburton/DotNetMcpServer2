@@ -1,0 +1,47 @@
+<Project>
+  
+  <!-- Global properties for AOT compatibility -->
+  <PropertyGroup>
+    <LangVersion>12</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8604;CS8602;CS8603</NoWarn>
+    
+    <!-- AOT Analysis Properties -->
+    <EnableAotAnalyzer Condition="'$(PublishAot)' == 'true'">true</EnableAotAnalyzer>
+    <EnableTrimAnalyzer Condition="'$(PublishTrimmed)' == 'true'">true</EnableTrimAnalyzer>
+    <EnableSingleFileAnalyzer Condition="'$(PublishSingleFile)' == 'true'">true</EnableSingleFileAnalyzer>
+    
+    <!-- Suppress trimming warnings for preview packages -->
+    <SuppressTrimAnalysisWarnings Condition="'$(PublishTrimmed)' == 'true'">false</SuppressTrimAnalysisWarnings>
+    
+    <!-- Default to invariant globalization for AOT -->
+    <InvariantGlobalization Condition="'$(PublishAot)' == 'true'">true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <!-- Runtime configuration overrides for AOT -->
+  <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+    <DebuggerSupport>false</DebuggerSupport>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <EventSourceSupport>false</EventSourceSupport>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+    <UseNativeHttpHandler>true</UseNativeHttpHandler>
+    
+    <!-- Size optimization -->
+    <OptimizationPreference>Size</OptimizationPreference>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    
+    <!-- JSON serializer settings for AOT -->
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+  </PropertyGroup>
+
+  <!-- Analysis rule sets -->
+  <PropertyGroup>
+    <AnalysisLevel>9.0</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+</Project>

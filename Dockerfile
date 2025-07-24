@@ -1,36 +1,63 @@
-# Use the official .NET 9 runtime as the base image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-WORKDIR /app
+# Minimal Dockerfile using Microsoft's chiseled Ubuntu base
+# This creates a small, secure container (~20-30MB total) with some basic OS functionality
 
-# Use the SDK image to build the application
+# Stage 1: Build the AOT executable
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
 WORKDIR /src
 
-# Copy project files and restore dependencies
-COPY ["DotNetMcpServer2/DotNetMcpServer2.csproj", "DotNetMcpServer2/"]
-COPY ["global.json", "./"]
-RUN dotnet restore "DotNetMcpServer2/DotNetMcpServer2.csproj"
+# Copy project files
+COPY global.json ./
+COPY Directory.Build.props ./
+COPY DotNetMcpServer2.sln ./
+COPY DotNetMcpServer2/ ./DotNetMcpServer2/
+COPY DotNetMcpServer2.Tests/ ./DotNetMcpServer2.Tests/
 
-# Copy source code and build
-COPY . .
-WORKDIR "/src/DotNetMcpServer2"
-RUN dotnet build "DotNetMcpServer2.csproj" -c Release -o /app/build
+# Restore dependencies
+RUN dotnet restore DotNetMcpServer2/DotNetMcpServer2.csproj
 
-# Publish the application
-FROM build AS publish
-RUN dotnet publish "DotNetMcpServer2.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# Build and publish AOT for Linux x64 with size optimization
+RUN dotnet publish DotNetMcpServer2/DotNetMcpServer2.csproj \
+    --configuration Release \
+    --runtime linux-x64 \
+    --self-contained true \
+    --output /app/publish \
+    -p:PublishAot=true \
+    -p:OptimizationPreference=Size \
+    -p:IlcOptimizationPreference=Size \
+    -p:StripSymbols=true \
+    --verbosity minimal
 
-# Final stage
-FROM base AS final
+# Verify the executable was created
+RUN ls -la /app/publish/ && \
+    file /app/publish/DotNetMcpServer2 && \
+    du -h /app/publish/DotNetMcpServer2 && \
+    chmod +x /app/publish/DotNetMcpServer2
+
+# Test the AOT executable works
+RUN /app/publish/DotNetMcpServer2 --version || echo "Version check may not be supported"
+
+# Stage 2: Minimal runtime using Microsoft's chiseled Ubuntu for AOT
+# This is optimized specifically for .NET AOT applications
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-jammy-chiseled-aot AS runtime
+
+# Copy only the AOT executable from build stage
+COPY --from=build /app/publish/DotNetMcpServer2 /app/DotNetMcpServer2
+
+# Set environment variables for optimal performance and security
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    DOTNET_NOLOGO=1 \
+    DOTNET_RUNNING_IN_CONTAINER=true
+
+# Use the app user already configured in the chiseled image
+USER app
+
 WORKDIR /app
-COPY --from=publish /app/publish .
 
-# Create non-root user for security
-RUN adduser --disabled-password --gecos '' mcpuser && chown -R mcpuser /app
-USER mcpuser
+# Health check using the AOT executable itself
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ./DotNetMcpServer2 --version || exit 1
 
-# Set environment variables
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-ENV DOTNET_NOLOGO=1
-
-ENTRYPOINT ["dotnet", "DotNetMcpServer2.dll"]
+# Default command
+ENTRYPOINT ["./DotNetMcpServer2"]

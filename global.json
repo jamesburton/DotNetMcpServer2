@@ -1,6 +1,10 @@
 {
   "sdk": {
     "version": "9.0.300",
-    "rollForward": "disable"
+    "rollForward": "enable",
+    "allowPrerelease": false
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.NoTargets": "3.7.56"
   }
 }

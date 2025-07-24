@@ -1,0 +1,16 @@
+{
+  "runtimeOptions": {
+    "configProperties": {
+      "System.Globalization.Invariant": true,
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false,
+      "System.StartupHookProvider.IsSupported": false,
+      "System.Text.Encoding.EnableUnsafeUTF7Encoding": false,
+      "System.Threading.Thread.EnableAutoreleasePool": false,
+      "Microsoft.Extensions.DependencyInjection.VerifyOpenGenericServiceTrimmability": true
+    },
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "9.0.0"
+    }
+  }
+}

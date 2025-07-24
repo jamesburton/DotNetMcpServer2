@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  dotnet-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dotnet-mcp-server2:latest
+    container_name: dotnet-mcp-server2
+    restart: unless-stopped
+    
+    # Environment variables
+    environment:
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+      - DOTNET_NOLOGO=1
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "./DotNetMcpServer2", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    
+    # Temporary directories
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    name: mcp-network

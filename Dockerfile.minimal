@@ -1,0 +1,43 @@
+# Ultra-lightweight Dockerfile using distroless base
+# This creates the smallest possible container image
+
+# Stage 1: Build the AOT executable (same as main Dockerfile)
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+WORKDIR /src
+
+# Copy project files
+COPY global.json ./
+COPY Directory.Build.props ./
+COPY DotNetMcpServer2.sln ./
+COPY DotNetMcpServer2/ ./DotNetMcpServer2/
+COPY DotNetMcpServer2.Tests/ ./DotNetMcpServer2.Tests/
+
+# Restore and publish AOT for Linux x64
+RUN dotnet restore DotNetMcpServer2/DotNetMcpServer2.csproj && \
+    dotnet publish DotNetMcpServer2/DotNetMcpServer2.csproj \
+    --configuration Release \
+    --runtime linux-x64 \
+    --self-contained true \
+    --output /app/publish \
+    --verbosity minimal
+
+# Verify and set permissions
+RUN chmod +x /app/publish/DotNetMcpServer2
+
+# Stage 2: Ultra-minimal runtime using distroless
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-jammy-chiseled AS runtime
+
+# Copy only the AOT executable
+COPY --from=build /app/publish/DotNetMcpServer2 /DotNetMcpServer2
+
+# Set environment variables
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    DOTNET_NOLOGO=1 \
+    DOTNET_RUNNING_IN_CONTAINER=true
+
+# Use non-root user (already configured in chiseled image)
+USER 1654
+
+ENTRYPOINT ["/DotNetMcpServer2"]
